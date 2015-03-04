@@ -20,7 +20,7 @@ function get_smarty() {
 	if ($smarty == '') {
 		$smarty = new Smarty();
 		$smarty->setTemplateDir('templates');
-		$smarty->setCompileDir('templates/c');
+		$smarty->setCompileDir('templates_c');
 		$smarty->setCacheDir('cache');
 		$smarty->setConfigDir('configs');
 		$GLOBALS['smarty'] = $smarty;
