@@ -24,9 +24,10 @@ $status[6] = "Paused"; $style[6] = "paused";
 $status[7] = "Skipped"; $style[7] = "skipped";
 
 
-# If no service request, fail for now
+# If no service request, redirect to full status page
 if (!array_key_exists('id', $_GET)) {
-	print "Error";
+	$newuri = preg_replace('/status/', 'status_all', $_SERVER['REQUEST_URI']);
+	header('Location: http://'.$_SERVER['HTTP_HOST'].$newuri);
 	exit;
 }
 
@@ -47,8 +48,6 @@ foreach ($response->{'serviceResult'}->{'entries'} as $entry) {
 }
 
 $smarty->assign('steps', $steps);
-
-
 
 # Output to template engine:
 $smarty->display('status.tpl');

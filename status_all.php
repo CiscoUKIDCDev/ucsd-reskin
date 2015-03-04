@@ -30,8 +30,6 @@ $smarty = get_smarty();
 # Send the request:
 $response = ucsd_api_call('userAPIGetTabularReport', '{param0:"6",param1:"",param2:"SERVICE-REQUESTS-T10"}');
 
-#var_dump($response->{'serviceResult'}->{'rows'});
-
 $i = 0;
 foreach ($response->{'serviceResult'}->{'rows'} as $entry) {
 	$request[$i]['Number'] = $entry->{'Service_Request_Id'};
@@ -44,8 +42,6 @@ foreach ($response->{'serviceResult'}->{'rows'} as $entry) {
 }
 
 $smarty->assign('requests', $request);
-
-
 
 # Output to template engine:
 $smarty->display('status_all.tpl');
