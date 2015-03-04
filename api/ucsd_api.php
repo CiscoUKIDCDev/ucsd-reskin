@@ -18,9 +18,13 @@ require_once('config.php');
 $vm_cache = '';
 
 function ucsd_api_call ($opName, $opData) {
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
+	return ucsd_api_call_url('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
 		urlencode($opName).'&opData='.urlencode($opData));
+}
+
+function ucsd_api_call_url ($url) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
 	// Set options
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	// Set headers
@@ -39,6 +43,8 @@ function ucsd_input_supported($input) {
 			return _ucsd_input_vm_picker($input);
 		case 'vCPUCount':
 			return _ucsd_input_vcpu_count($input);
+		case 'memSizeMB':
+			return _ucsd_input_memory_picker($input);
 		default:
 			return false;
 	}
@@ -55,7 +61,7 @@ function _ucsd_input_plain_text ($input) {
 # VM picker:
 function _ucsd_input_vm_picker ($input) {
 	$name = $input->{'name'};
-	$form[0] = '<label for="'.$name.'">'.$input->{'label'}.'</label>'."\n";
+	$form[0] = '<label for="'.$name.'">'.$input->{'label'}.'</label>';
 
 	# API call to get full VM list (check cache first):
 	if ($GLOBALS['vm_cache'] == '') {
@@ -69,6 +75,25 @@ function _ucsd_input_vm_picker ($input) {
 	$form[1] .= '</select>';
 	return $form;
 }
+
+# Memory Picker
+
+function _ucsd_input_memory_picker ($input) {
+	$name = $input->{'name'};
+	$form[0] = '<label for="'.$name.'">'.$input->{'label'}.'</label>';
+	$form[1] = '<select name="'.$name.'" id="'.$name.'">';
+	$form[1] .= '<option value="256">256 MiB</option>';
+	$form[1] .= '<option value="512">512 MiB</option>';
+	# Add the rest...
+	for ($i = 1024; $i <= 8192; $i += 256) {
+		$form[1] .= '<option value="'.$i.'">'.($i / 1024).' GiB</option>';
+	}
+	$form[1] .= '<option value="16384">16 GiB</option>';
+	$form[1] .= '</select>';
+	return $form;
+}
+
+# vCPU Picker
 
 function _ucsd_input_vcpu_count ($input) {
 	$name = $input->{'name'};

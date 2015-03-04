@@ -54,6 +54,7 @@ foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 	}
 }
 
+
 # Output to template engine:
 $smarty->display('request_service.tpl');
 
