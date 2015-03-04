@@ -42,14 +42,21 @@ foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 				$entry['input'] = $form[1];
 			}
 		}
-		# Add to output array for template engine to draw later:
-		$output[] = $entry;
+		# Add to output array for template engine to draw later (by category):
+		$output[$row->{'Folder'}][$row->{'Catalog_Name'}] = $entry;
 	}
 }
-
 # Output to template engine:
 $smarty = get_smarty();
-$smarty->assign('categories', $output);
+
+# Sort everything alphabetically:
+$keys = array_keys($output);
+for ($i = 0; $i < sizeof($output); $i++) {
+	ksort($output[$keys[$i]], SORT_STRING);
+}
+ksort($output, SORT_STRING);
+
+$smarty->assign('items', $output);
 $smarty->display('index.tpl');
 
 ?>
