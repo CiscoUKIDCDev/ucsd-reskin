@@ -32,7 +32,7 @@
 </table>
 
 <p style="margin-top: 1em; padding-left: 1em;">
-	<a href="request_status">&gt;&gt;See all Service Requests</a>
+	<a href="status_all">&gt;&gt;See all Service Requests</a>
 </p>
 
 </body>
