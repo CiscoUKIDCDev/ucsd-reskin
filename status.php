@@ -30,18 +30,16 @@ if (!array_key_exists('id', $_GET)) {
 	header('Location: http://'.$_SERVER['HTTP_HOST'].$newuri);
 	exit;
 }
-else if (!is_int($_GET['id'])) {
-	show_error_page('Invalid job ID');
+else if (!is_numeric($_GET['id'])) {
+	show_error_page('Invalid job ID (must be all numbers)');
 	exit;
 }
-
 # Initialise template engine:
 $smarty = get_smarty();
 $smarty->assign('request', $_GET['id']);
 
 # Send the request:
 $response = ucsd_api_call('userAPIGetServiceRequestWorkFlow', '{param0:'.$_GET['id'].'}');
-
 
 $i = 0;
 foreach ($response->{'serviceResult'}->{'entries'} as $entry) {

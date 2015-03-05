@@ -29,8 +29,16 @@ function ucsd_api_call_url ($url) {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	// Set headers
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [ "X-Cloupia-Request-Key: ".$GLOBALS['ucsd_api_key'],]);
-	// Assume's all is well and lets upstream handle errors:
-	return json_decode(curl_exec($ch));
+	
+	$response = json_decode(curl_exec($ch));
+
+	# Check for errors
+	if ($response->{'serviceError'} != null) {
+		show_error_page('API request failed: '.$response->{'serviceError'});
+		exit;
+	}
+
+	return $response;
 }
 
 # Takes an input object and returns its field, or false if it's not supported
