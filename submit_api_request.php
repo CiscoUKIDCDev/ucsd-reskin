@@ -14,8 +14,7 @@ include 'api/ucsd_api.php';
 include 'api/smarty.php';
 
 if (!isset($_POST['Catalog_Name'])) {
-	# Print error page
-	print "Error - no task (fix later)";
+	show_error_page('No catalog item specified');
 	exit;
 }
 # Construct request:
@@ -30,8 +29,7 @@ foreach (array_keys($_POST) as $post) {
 	}
 }
 # Build up an array which we'll convert to JSON:
-$list['list'] = $param;
-$request['param1'] = $list;
+$request['param1']['list'] = $param;
 $request['param2'] = 1000;
 # Convert to JSON and send:
 $response = ucsd_api_call('userAPISubmitVAppServiceRequest', json_encode($request));

@@ -78,6 +78,12 @@ function _ucsd_input_vm_picker ($input) {
 
 # Memory Picker
 
+function show_error_page ($error) {
+	$smarty = get_smarty();
+	$smarty->assign('Description', $error);
+	$smarty->display('error.tpl');
+}
+
 function _ucsd_input_memory_picker ($input) {
 	$name = $input->{'name'};
 	$form[0] = '<label for="'.$name.'">'.$input->{'label'}.'</label>';
