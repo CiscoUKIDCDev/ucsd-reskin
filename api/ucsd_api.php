@@ -25,9 +25,9 @@ function ucsd_api_call ($opName, $opData) {
 function ucsd_api_call_url ($url) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
-	// Set options
+	# Set options
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	// Set headers
+	# Set headers
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [ "X-Cloupia-Request-Key: ".$GLOBALS['ucsd_api_key'],]);
 	
 	$response = json_decode(curl_exec($ch));
