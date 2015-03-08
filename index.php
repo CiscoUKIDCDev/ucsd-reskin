@@ -14,13 +14,16 @@
 include 'api/ucsd_api.php';
 include 'api/smarty.php';
 
-# Send the request:
-$catalog_items = ucsd_api_call('userAPIGetAllCatalogs', '{}');
+# Obtain user information:
+$user_details = ucsd_api_call('userAPIGetMyLoginProfile', '{}')->{'serviceResult'};
+# Send request for group membership, this has to be done as an admin user:
+$catalog_items = ucsd_api_call_admin('userAPIGetAllCatalogs', '{param0:"'.$user_details->{'groupName'}.'"}');
 
 # Iterate through each item:
 foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 	# Only inspect advanced catalog items
 	if ($row->{'Catalog_Type'} == 'Advanced') {
+		# Has to be called as admin user today (not sure why)
 		$detail = ucsd_api_call('userAPIWorkflowInputDetails',
 	 	  '{param0:"'.$row->{'Catalog_Name'}.'"}');
 		$entry['Catalog_Name'] = $row->{'Catalog_Name'};

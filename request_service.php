@@ -13,10 +13,12 @@
 include 'api/ucsd_api.php';
 include 'api/smarty.php';
 
-# Send the request:
-# Thus far I haven't found a way to get all the needed information
-# from a single catelog item, so need to pull all and filter out
-$catalog_items = ucsd_api_call('userAPIGetAllCatalogs', '{}');
+# Obtain user information:
+$user_details = ucsd_api_call('userAPIGetMyLoginProfile', '{}')->{'serviceResult'};
+
+# Thus far I haven't found a way to get all the needed information from a single catelog item,
+# so need to pull all and filter out. This also has to be called as the admin user (not sure why)
+$catalog_items = ucsd_api_call_admin('userAPIGetAllCatalogs', '{param0:"'.$user_details->{'groupName'}.'"}');
 
 # Initialise template engine:
 $smarty = get_smarty();

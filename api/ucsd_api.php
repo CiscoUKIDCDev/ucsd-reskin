@@ -17,20 +17,17 @@ require_once('config.php');
 # Initialise session management:
 init_session();
 
-# Global cache:
-$vm_cache = '';
-
 # Sends a request for the currently logged in user:
-function ucsd_api_call ($opName, $opData) {
+function ucsd_api_call ($opName, $opData, $error = true) {
 	return ucsd_api_call_url('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
-		urlencode($opName).'&opData='.urlencode($opData));
+		urlencode($opName).'&opData='.urlencode($opData), $error);
 }
 
 # Sends a request by direct URL for the currently logged in user:
-function ucsd_api_call_url ($url) {
+function ucsd_api_call_url ($url, $error = true) {
 	$response = ucsd_api_call_url_admin ($url, $_SESSION['_ucsd_api_key']);
 	# Check for errors
-	if ($response->{'serviceError'} != null) {
+	if (($response->{'serviceError'} != null) && ($error == true)) {
 		show_error_page('API request "'.$url.'" failed: '.$response->{'serviceError'});
 		exit;
 	}
@@ -67,6 +64,8 @@ function ucsd_input_supported($input) {
 			return '_ucsd_input_vcpu_count';
 		case 'memSizeMB':
 			return '_ucsd_input_memory_picker';
+		case 'ipaddress':
+			return '_ucsd_input_ip_address';
 		default:
 			return false;
 	}
@@ -94,14 +93,10 @@ function _ucsd_input_plain_text ($input) {
 function _ucsd_input_vm_picker ($input) {
 	$name = $input->{'name'};
 	$form[0] = '<label for="'.$name.'">'.$input->{'label'}.'</label>';
-
-	# API call to get full VM list (check cache first):
-	if ($GLOBALS['vm_cache'] == '') {
-		$GLOBALS['vm_cache'] = ucsd_api_call('userAPIGetTabularReport',
-			'{param0:"0",param1:"All Clouds",param2:"VMS-T0"}');
-	}
+	$vm_list = ucsd_api_call_admin('userAPIGetTabularReport',
+	   '{param0:"0",param1:"All Clouds",param2:"VMS-T0"}', false);
 	$form[1] = '<select name="'.$name.'" id="'.$name.'">';
-	foreach ($GLOBALS['vm_cache']->{'serviceResult'}->{'rows'} as $row) {
+	foreach ($vm_list->{'serviceResult'}->{'rows'} as $row) {
 		$form[1] .= '<option value="'.$row->{'VM_ID'}.'">'.$row->{'VM_Name'}.'</option>';
 	}
 	$form[1] .= '</select>';
@@ -143,6 +138,13 @@ function _ucsd_input_vcpu_count ($input) {
 	}
 	$form[1] .= '</select>';
 	return $form;
+}
+
+function _ucsd_input_ip_address ($input) {
+        $name = $input->{'name'};
+        $form[0] = '<label for="'.$input->{'name'}.'">'.$input->{'label'}.'</label>'."\n";
+        $form[1] = '<input type="text" name="'.$input->{'name'}.'" id="'.$input->{'name'}.'" class="ip" />'."\n";
+        return $form;
 }
 
 # Initialises the session and grabs variables etc

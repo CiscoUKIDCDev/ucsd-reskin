@@ -16,12 +16,21 @@ include 'api/smarty.php';
 # Initialise template engine:
 $smarty = get_smarty();
 
+$user_details = ucsd_api_call('userAPIGetMyLoginProfile', '{}');
 # Send the request to get all service requests:
-$response = ucsd_api_call('userAPIGetTabularReport', '{param0:"6",param1:"",param2:"SERVICE-REQUESTS-T10"}');
-
+$response = ucsd_api_call_admin('userAPIGetServiceRequests', '{}');
 # Build up a list of variables for the template engine to use (array index for each status item)
 $i = 0;
 foreach ($response->{'serviceResult'}->{'rows'} as $entry) {
+	# Test if the user has permission to access it - this is SLOW! Must be a better way...
+	# For some reason the call userAPIGetServiceRequests doesn't return anything for non-admin?
+	if ($user_details->{'serviceResult'}->{'role'} != 'Admin') {
+		$response = ucsd_api_call('userAPIGetServiceRequestWorkFlow',
+		   '{param0:'.$entry->{'Service_Request_Id'}.'}', false);
+		if ($response->{'serviceError'} != null) {
+			continue;
+		}
+	}
 	$request[$i]['Number'] = $entry->{'Service_Request_Id'};
 	$request[$i]['Name'] = $entry->{'Catalog_Workflow_Name'};
 	$request[$i]['Status'] = $entry->{'Request_Status'};
