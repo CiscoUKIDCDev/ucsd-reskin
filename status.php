@@ -31,7 +31,7 @@ if (!array_key_exists('id', $_GET)) {
 	exit;
 }
 else if (!is_numeric($_GET['id'])) {
-	show_error_page('Invalid job ID (must be all numbers)');
+	show_error_page('Invalid job ID "'.$_GET['id'].'" (must be all numbers)');
 	exit;
 }
 # Initialise template engine:
@@ -41,6 +41,7 @@ $smarty->assign('request', $_GET['id']);
 # Send the request:
 $response = ucsd_api_call('userAPIGetServiceRequestWorkFlow', '{param0:'.$_GET['id'].'}');
 
+# Build up a variable array for templating engine - one index per status line
 $i = 0;
 foreach ($response->{'serviceResult'}->{'entries'} as $entry) {
 	$steps[$i]['Name'] = $entry->{'stepId'};
