@@ -6,9 +6,8 @@
  * This file is licensed under the MIT license. See LICENSE for more
  * information.
  *
- * login.php
- * This file handles logging in to the system and authenticating
- * against UCS Director
+ * logout.php
+ * Logs out a currently logged-in user
  *******************************************************************/
 
 # End the session:
