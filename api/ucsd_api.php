@@ -14,31 +14,44 @@
 # Config file:
 require_once('config.php');
 
+# Initialise session management:
+init_session();
+
 # Global cache:
 $vm_cache = '';
 
+# Sends a request for the currently logged in user:
 function ucsd_api_call ($opName, $opData) {
 	return ucsd_api_call_url('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
 		urlencode($opName).'&opData='.urlencode($opData));
 }
 
+# Sends a request by direct URL for the currently logged in user:
 function ucsd_api_call_url ($url) {
+	$response = ucsd_api_call_url_admin ($url, $_SESSION['_ucsd_api_key']);
+	# Check for errors
+	if ($response->{'serviceError'} != null) {
+		show_error_page('API request "'.$url.'" failed: '.$response->{'serviceError'});
+		exit;
+	}
+	return $response;
+}
+
+# Sends a request as the admin user (from config.php)
+function ucsd_api_call_admin ($opName, $opData) {
+	return ucsd_api_call_url_admin('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
+		urlencode($opName).'&opData='.urlencode($opData), $GLOBALS['ucsd_api_key']);
+}
+
+# Sends a request to UCS director with the given API key
+function ucsd_api_call_url_admin ($url, $api_key) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	# Set options
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	# Set headers
-	curl_setopt($ch, CURLOPT_HTTPHEADER, [ "X-Cloupia-Request-Key: ".$GLOBALS['ucsd_api_key'],]);
-	
-	$response = json_decode(curl_exec($ch));
-
-	# Check for errors
-	if ($response->{'serviceError'} != null) {
-		show_error_page('API request failed: '.$response->{'serviceError'});
-		exit;
-	}
-
-	return $response;
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [ "X-Cloupia-Request-Key: ".$api_key,]);
+	return json_decode(curl_exec($ch));
 }
 
 # Takes an input object derived from a userAPIWorkflowInputDetails call and returns
@@ -130,6 +143,33 @@ function _ucsd_input_vcpu_count ($input) {
 	}
 	$form[1] .= '</select>';
 	return $form;
+}
+
+# Initialises the session and grabs variables etc
+function init_session () {
+	session_start();
+	# Check if there's an API key:
+	if (!isset($_SESSION['_ucsd_api_key'])) {
+		redirect_to_login('You need to be logged in view this page');
+	}
+	# Also check if it's valid:
+	else {
+		# Test API key:
+		$response = ucsd_api_call_admin('userAPIGetUserLoginProfile','{param0:"'.$_SESSION['_ucsd_username'].'"}');
+		if ($response->{'serviceError'} != null) {
+			redirect_to_login('Invalid API key (it may have been changed)');
+		}
+	}
+}
+
+function redirect_to_login ($reason = '') {
+	# Redirect to login page unless already there:
+	if (!preg_match('/login(\.php)?$/', $_SERVER["SCRIPT_FILENAME"])) {
+		$newuri = preg_replace('/'.basename($_SERVER['PHP_SELF']).'/', 'login.php', $_SERVER['PHP_SELF']);
+		header('Location: http://'.$_SERVER['HTTP_HOST'].$newuri.'?redir='.urlencode($_SERVER['PHP_SELF']).
+		   '&reason='.urlencode($reason));
+		exit;
+	}
 }
 
 

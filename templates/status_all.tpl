@@ -30,6 +30,7 @@
 </head>
 <body>
 <h1>Service Requests</h1>
+<p>Logged in as <strong>{$username}</strong> - <a href="logout">logout</a>.</p>
 <p><a href="index">&lt;&lt;Request a new Catalog Item</a></p>
 <div id="sr_req">
 {foreach from=$requests item=request}

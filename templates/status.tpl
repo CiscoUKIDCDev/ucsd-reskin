@@ -33,6 +33,7 @@
 </head>
 <body>
 <h1>Service Request #{$request}</h1>
+<p>Logged in as <strong>{$username}</strong> - <a href="logout">logout</a>.</p>
 <p>Note: This page updates automatically. You can also <a href="javascript:location.reload();">reload it</a> to track progress.</p>
 <div id="sr_req">
 {foreach from=$steps item=step}

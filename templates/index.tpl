@@ -7,6 +7,7 @@
 </head>
 <body>
 <h1>Request Catalog Item</h1>
+<p>Logged in as <strong>{$username}</strong> - <a href="logout">logout</a>.</p>
 
 <table rows="3" style="margin-left: 10%; border: 1px solid #000080; margin-right: 10%; width: 80%;">
 {foreach from=$items key=category item=catalog_entry}

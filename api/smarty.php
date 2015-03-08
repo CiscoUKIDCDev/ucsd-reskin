@@ -24,6 +24,13 @@ function get_smarty() {
 		$smarty->setCacheDir('cache');
 		$smarty->setConfigDir('configs');
 		$GLOBALS['smarty'] = $smarty;
+		# Add some other things
+		if (isset($_SESSION['_ucsd_username'])) {
+			$smarty->assign('username', $_SESSION['_ucsd_username']);
+		}
+		else {
+			$smarty->assign('username', 'not logged in');
+		}
 	}
 	return $smarty;
 }

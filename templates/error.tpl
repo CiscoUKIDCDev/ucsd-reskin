@@ -8,5 +8,6 @@
 <body>
 <h1>Error</h1>
 <p>{$Description}</p>
+<p><a href="logout">Logout {$username}</a></p>
 </body>
 </html>
