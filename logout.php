@@ -17,7 +17,7 @@ session_destroy();
 
 # Redirect to login:
 $newuri = preg_replace('/'.basename($_SERVER['PHP_SELF']).'/', 'login.php', $_SERVER['PHP_SELF']);
-$redir = $newuri = preg_replace('/'.basename($_SERVER['PHP_SELF']).'/', 'index.php', $_SERVER['PHP_SELF']);
+$redir = preg_replace('/'.basename($_SERVER['PHP_SELF']).'/', 'index.php', $_SERVER['PHP_SELF']);
 header('Location: http://'.$_SERVER['HTTP_HOST'].$newuri.'?redir='.urlencode($redir).
    '&reason='.urlencode('Logged out successfully'));
 
