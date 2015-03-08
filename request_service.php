@@ -37,7 +37,7 @@ foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 		$i = 0;
 		# Iterate through inputs:
 		foreach ($detail->{'serviceResult'}->{'details'} as $input) {
-		 	$form = ucsd_input_supported($input);
+		 	$form = ucsd_draw_input($input);
 		 	if ($form == false) {
 				# The input method isn't supported, don't show and skip to next
 				continue;

@@ -41,21 +41,32 @@ function ucsd_api_call_url ($url) {
 	return $response;
 }
 
-# Takes an input object and returns its field, or false if it's not supported
-# the returning item should return an array of two items - the label and input field
+# Takes an input object derived from a userAPIWorkflowInputDetails call and returns
+# either false (the input isn't supported) or a reference to a function that can draw
+# the input item.
 function ucsd_input_supported($input) {
 	switch ($input->{'type'}) {
 		case 'gen_text_input':
-			return _ucsd_input_plain_text($input);
+			return '_ucsd_input_plain_text';
 		case 'vm':
-			return _ucsd_input_vm_picker($input);
+			return '_ucsd_input_vm_picker';
 		case 'vCPUCount':
-			return _ucsd_input_vcpu_count($input);
+			return '_ucsd_input_vcpu_count';
 		case 'memSizeMB':
-			return _ucsd_input_memory_picker($input);
+			return '_ucsd_input_memory_picker';
 		default:
 			return false;
 	}
+}
+
+# Takes an input object and returns its field, or false if it's not supported
+# the returning item should return an array of two items - the label and input field
+function ucsd_draw_input($input) {
+	$ref = ucsd_input_supported($input);
+	if ($ref != false) {
+		return $ref($input);
+	}
+	return false;
 }
 
 # Plain text input form
