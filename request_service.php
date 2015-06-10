@@ -23,6 +23,8 @@ $catalog_items = ucsd_api_call_admin('userAPIGetAllCatalogs', '{param0:"'.$user_
 # Initialise template engine:
 $smarty = get_smarty();
 
+$inputs = array();
+
 # Iterate through each item:
 foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 	if ($row->{'Catalog_Name'} == $_GET['catalog']) {
@@ -52,7 +54,12 @@ foreach ($catalog_items->{'serviceResult'}->{'rows'} as $row) {
 
 			}
 		}
-		$smarty->assign('inputs', $inputs);
+		if ($inputs != 0) {
+			$smarty->assign('inputs', $inputs);
+		}
+		else {
+#			$smarty->assign('inputs', '');
+		}
 	}
 }
 
