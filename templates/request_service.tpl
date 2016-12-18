@@ -27,7 +27,7 @@ $(function(){
 <p>Logged in as <strong>{$username}</strong> - <a href="logout">logout</a>.</p>
 <div style="border: 1px solid #000080; margin-left: 10%; margin-right: 10%; padding: 1.5em; margin-bottom: 2em;">
 	<h3>
-		<img src="http://{$IP_Addr}/{$Image}" />
+		<img src="http://{$IP_Addr}/{$Image}" style="max-width: 100px"/>
 		{$Catalog_Name}
 	</h3>
 	<p>{$Description}</p>

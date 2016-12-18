@@ -19,7 +19,7 @@ init_session();
 
 # Sends a request for the currently logged in user:
 function ucsd_api_call ($opName, $opData, $error = true) {
-	return ucsd_api_call_url('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
+	return ucsd_api_call_url('https://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
 		urlencode($opName).'&opData='.urlencode($opData), $error);
 }
 
@@ -36,7 +36,7 @@ function ucsd_api_call_url ($url, $error = true) {
 
 # Sends a request as the admin user (from config.php)
 function ucsd_api_call_admin ($opName, $opData) {
-	return ucsd_api_call_url_admin('http://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
+	return ucsd_api_call_url_admin('https://'.$GLOBALS['ucsd_ip'].'/app/api/rest?opName='.
 		urlencode($opName).'&opData='.urlencode($opData), $GLOBALS['ucsd_api_key']);
 }
 
@@ -48,6 +48,8 @@ function ucsd_api_call_url_admin ($url, $api_key) {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	# Set headers
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [ "X-Cloupia-Request-Key: ".$api_key,]);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	return json_decode(curl_exec($ch));
 }
 

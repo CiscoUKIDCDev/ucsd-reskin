@@ -15,7 +15,7 @@
 {foreach from=$catalog_entry item=item}
 <tr>
 	<td style="padding-top: 1em; vertical-align: middle; text-align: center">
-		<img src="http://{$item.IP_Addr}/{$item.Image}" />
+		<img src="http://{$item.IP_Addr}/{$item.Image}" style="max-width: 64px"/>
 	</td>
 	<td style="padding-top: 1em;">
 		<h3 style="padding: 0; margin: 0;">{$item.Catalog_Name}</h3>
